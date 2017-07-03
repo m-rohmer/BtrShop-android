@@ -23,7 +23,7 @@ public class PurchasesContract {
 
         void sendPurchases();
 
-        void postPurchases(String ean, List<String> listEansProducts);
+        void postPurchases(List<String> listEansProducts);
 
         void getAssociatedProducts(List<Product> listProducts);
     }

@@ -37,15 +37,14 @@ public class PurchasesPresenter implements PurchasesContract.Presenter{
     }
 
     @Override
-    public void postPurchases(String ean, List<String> listEansProducts) {
-        checkNotNull(ean, "ean cannot be null!");
+    public void postPurchases(List<String> listEansProducts) {
         checkNotNull(listEansProducts, "listProducts cannot be null");
 
-        retrofit.create(ProductsService.class).postRecommendation(ean, listEansProducts)
+        retrofit.create(ProductsService.class).postRecommendation(listEansProducts)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .unsubscribeOn(Schedulers.io())
-                .subscribe(new Observer<Product>() {
+                .subscribe(new Observer<List<Product>>() {
 
                     @Override
                     public void onCompleted() {
@@ -57,7 +56,7 @@ public class PurchasesPresenter implements PurchasesContract.Presenter{
                     }
 
                     @Override
-                    public void onNext(Product product) {
+                    public void onNext(List<Product> product) {
                     }
 
                 });

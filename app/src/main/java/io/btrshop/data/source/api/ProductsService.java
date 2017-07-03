@@ -31,8 +31,7 @@ public interface ProductsService {
                                     @Body List<BeaconJson> listBeacon);
 
     @POST("products/recommendation")
-    Observable<Product> postRecommendation(@Query("ean") String ean,
-                                           @Body List<String> eansList);
+    Observable<List<Product>> postRecommendation(@Body List<String> eansList);
 
     @GET("products/recommendation")
     Observable<List<Product>> getAssociated(@Query("eans[]") List<String> eanList);

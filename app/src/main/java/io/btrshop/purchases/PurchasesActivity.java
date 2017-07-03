@@ -228,15 +228,13 @@ public class PurchasesActivity extends AppCompatActivity implements PurchasesCon
             DialogInterface.OnClickListener onClickYes = new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    for (Product p : listPurchases) {
-                        List<String> eansProducts = new ArrayList<>();
-                        for (Product product : listPurchases) {
-                            if (listPurchases.indexOf(p) != listPurchases.indexOf(product))
-                                eansProducts.add(product.getEan());
-                        }
-                        mPresenter.postPurchases(p.getEan(),eansProducts);
-                        Log.i("POST RECOMMEND.",eansProducts.toString());
+                    List<String> eansProducts = new ArrayList<>();
+                    for (Product product : listPurchases) {
+                        eansProducts.add(product.getEan());
                     }
+                    mPresenter.postPurchases(eansProducts);
+                    Log.i("POST RECOMMEND.",eansProducts.toString());
+                    listAssociated.clear();
                     listPurchases.clear();
                     adapter.notifyDataSetChanged();
                     total = 0;
