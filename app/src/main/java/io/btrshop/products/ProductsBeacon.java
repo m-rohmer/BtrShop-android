@@ -79,7 +79,7 @@ public class ProductsBeacon {
             distance =  Math.pow(ratio,10);
         }
         else {
-            distance =  (COEFF1)*Math.pow(ratio,COEFF2) + COEFF3;
+            distance = (COEFF1)*Math.pow(ratio,COEFF2) + COEFF3;
         }
         return distance;
     }
@@ -111,11 +111,12 @@ public class ProductsBeacon {
             // If we can't determine an accuracy with the beacon, we don't add it to the list we return.
             try {
                 distance = calculateDistance(b.getMeasuredPower(), b.getRssi());
-                returnList.add(new BeaconJson(b.getProximityUUID().toString(), distance));
+                float closeValue = 0;
+                if(b.getRssi() > -50) closeValue = 1;
+                returnList.add(new BeaconJson(b.getProximityUUID().toString(), distance, closeValue, 1-closeValue));
             } catch (Exception e) {
                 Log.d("PRODUCTBEACON", "We cannot determine an accuracy with the beacon : "+ b.getProximityUUID());
             }
-
         }
         return returnList;
     }

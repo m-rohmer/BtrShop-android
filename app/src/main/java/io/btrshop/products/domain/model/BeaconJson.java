@@ -17,15 +17,24 @@ public class BeaconJson {
     @SerializedName("uuid")
     private String uuid;
 
+    @SerializedName("closeCoef")
+    private float closeCoef;
+
+    @SerializedName("farCoef")
+    private float farCoef;
+
+
     /**
      * Constructor.
      *
      * @param uuid
      * @param distance
      */
-    public BeaconJson(String uuid, double distance) {
+    public BeaconJson(String uuid, double distance, float closeCoef, float farCoef) {
         this.uuid = uuid;
         this.dist = distance/1000;
+        this.closeCoef = closeCoef;
+        this.farCoef = farCoef;
     }
 
     public double getDist() {
@@ -42,5 +51,21 @@ public class BeaconJson {
 
     public void setUuid(String uuid) {
         this.uuid = uuid;
+    }
+
+    public float getCloseCoef() {
+        return closeCoef;
+    }
+
+    public void setCloseCoef(float closeCoef) {
+        this.closeCoef = closeCoef;
+    }
+
+    public float getFarCoef() {
+        return farCoef;
+    }
+
+    public void setFarCoef(float farCoef) {
+        this.farCoef = farCoef;
     }
 }

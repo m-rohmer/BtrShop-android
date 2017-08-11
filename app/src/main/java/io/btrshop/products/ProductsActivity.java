@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -21,6 +22,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -29,6 +31,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 
 import com.afollestad.materialdialogs.DialogAction;
@@ -37,19 +40,24 @@ import com.estimote.sdk.SystemRequirementsChecker;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import fr.inria.spirals.sensorscollect.api.manualfeature.ManualFeature;
+import fr.inria.spirals.sensorscollect.sensor.SensorManager;
 import io.btrshop.BtrShopApplication;
 import io.btrshop.R;
-import io.btrshop.purchases.PurchasesActivity;
 import io.btrshop.detailsproduct.DetailsProductActivity;
 import io.btrshop.detailsproduct.domain.model.Product;
 import io.btrshop.products.domain.adapter.ProductAdapterRecycler;
+import io.btrshop.purchases.PurchasesActivity;
 import io.btrshop.scanner.ScannerActivity;
 import io.btrshop.util.EspressoIdlingResource;
 
@@ -83,8 +91,6 @@ public class ProductsActivity extends AppCompatActivity implements ProductsContr
     @BindView(R.id.fab_scan_article)
     FloatingActionButton fab;
     static MaterialDialog dialog;
-
-
 
     private int targetSdkVersion;
 
@@ -156,6 +162,9 @@ public class ProductsActivity extends AppCompatActivity implements ProductsContr
 
         // Presenter check recommendation
         showNoRecommendation();
+
+        initSensorManager();
+        askForRequiredPermissions();
     }
 
     @Override
@@ -164,6 +173,7 @@ public class ProductsActivity extends AppCompatActivity implements ProductsContr
 
         SystemRequirementsChecker.checkWithDefaultDialogs(this);
         beacons.connect();
+        sensorManager.toggle();
 
         timer = new Timer();
         TimerRecommendation mt = new TimerRecommendation();
@@ -173,6 +183,7 @@ public class ProductsActivity extends AppCompatActivity implements ProductsContr
     @Override
     protected void onPause() {
         beacons.stop();
+        sensorManager.stop();
         super.onPause();
     }
 
@@ -408,5 +419,43 @@ public class ProductsActivity extends AppCompatActivity implements ProductsContr
                 }
             });
         }
+    }
+
+    // SENSOR
+    private static class CallbackRequestCodes {
+        private static final int REQUIRED_PERMISSIONS = 1;
+    }
+
+    private static final String LOG_TAG = ProductsActivity.class.getCanonicalName();
+
+    private SensorManager sensorManager;
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case CallbackRequestCodes.REQUIRED_PERMISSIONS:
+                onRequestPermissionsResultAllPermissions(permissions, grantResults);
+                return;
+            default:
+                Log.e(LOG_TAG, "Unknown permission request code " + requestCode);
+        }
+    }
+
+    private void onRequestPermissionsResultAllPermissions(final String[] permissions, final int[] grantResults) {
+        for (int i = 0; i < permissions.length; i++) {
+            sensorManager.onRequiredPermissionChange(permissions[i], grantResults[i]);
+        }
+    }
+
+    private void initSensorManager() {
+        sensorManager = new SensorManager(this);
+    }
+
+    private void askForRequiredPermissions() {
+        final Set<String> requiredPermissions = sensorManager.getRequiredPermissions();
+        ActivityCompat.requestPermissions(
+                this,
+                requiredPermissions.toArray(new String[requiredPermissions.size()]),
+                CallbackRequestCodes.REQUIRED_PERMISSIONS
+        );
     }
 }

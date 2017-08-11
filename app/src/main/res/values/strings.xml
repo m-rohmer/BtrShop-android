@@ -80,4 +80,21 @@
     <string name="list_global_price">Total</string>
     <string name="send_list_purchases">Confirmez-vous l\'achat de tous ces articles ?</string>
 
+    <!-- Main activity's UI components -->
+    <string name="collect_file_base_name">collect</string>
+
+    <!-- Main activity's enable services dialog -->
+    <string name="dialog_enable_features_title">Additional services</string>
+    <string name="dialog_enable_features_message">You will be asked to manually enable services used by sensors.</string>
+    <string name="dialog_enable_features_ok_button">Enable services</string>
+
+    <!-- Sensor configuration -->
+    <string name="sensor_defaultble_delay">1000</string>
+    <string name="sensor_rxandroidble_reporter_plaintextfile_prefix">ble</string>
+    <string name="sensor_reactivewifi_reporter_plaintextfile_prefix">wifi</string>
+
+    <!-- Position messages -->
+    <string name="message_currently_moving">POSITION UPDATED: currently moving</string>
+    <string name="message_on_position">POSITION UPDATED: on position</string>
+
 </resources>
